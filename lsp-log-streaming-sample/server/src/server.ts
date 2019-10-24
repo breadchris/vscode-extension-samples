@@ -46,6 +46,7 @@ connection.onInitialize((params: InitializeParams) => {
 	return {
 		capabilities: {
 			textDocumentSync: documents.syncKind,
+			signatureHelpProvider: {},
 			// Tell the client that the server supports code completion
 			completionProvider: {
 				resolveProvider: true

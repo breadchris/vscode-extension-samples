@@ -6,6 +6,9 @@
 import * as path from 'path';
 import { workspace, commands, ExtensionContext, OutputChannel } from 'vscode';
 import * as WebSocket from 'ws';
+import * as vscode from 'vscode'
+import { CallHierarchyServiceImpl } from './callheirarchy'
+import { Range, Location } from 'vscode-languageserver-types'
 
 import {
 	LanguageClient,
@@ -16,10 +19,27 @@ import {
 
 let client: LanguageClient;
 
+vscode.languages.registerHoverProvider('javascript', {
+	provideHover(document, position, _) {
+		console.log(document.uri);
+		console.log(position);
+		var range = Range.create(position, position)
+		var loc = Location.create(document.uri.toString(), range)
+		var callHierarchy = new CallHierarchyServiceImpl();
+		callHierarchy.languageClient = client;
+		var test = callHierarchy.getRootDefinition(loc)
+		test.then(x => console.log(x))
+
+		return {
+			contents: ["running"]
+		};
+	}
+});
+
 export function activate(context: ExtensionContext) {
 	const socketPort = workspace.getConfiguration('languageServerExample').get('port', 7000);
 	let socket: WebSocket | null = null;
-	
+
 	commands.registerCommand('languageServerExample.startStreaming', () => {
 		// Establish websocket connection
 		socket = new WebSocket(`ws://localhost:${socketPort}`);
@@ -51,20 +71,20 @@ export function activate(context: ExtensionContext) {
 		// Only append the logs but send them later
 		append(value: string) {
 			log += value;
-			console.log(value);
 		},
 		appendLine(value: string) {
 			log += value;
+			//console.log(value);
 			// Don't send logs until WebSocket initialization
 			if (socket && socket.readyState === WebSocket.OPEN) {
 				socket.send(log);
 			}
 			log = '';
 		},
-		clear() {},
-		show() {},
-		hide() {},
-		dispose() {}
+		clear() { },
+		show() { },
+		hide() { },
+		dispose() { }
 	};
 
 	// Options to control the language client
