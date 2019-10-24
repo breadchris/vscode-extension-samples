@@ -1,5 +1,11 @@
 # LSP Example for Log Streaming
 
+## Notes
+
+- https://github.com/microsoft/vscode-languageserver-node/pull/346
+- https://github.com/cquery-project/cquery/blob/master/src/messages/cquery_call_hierarchy.cc#L23
+- https://github.com/microsoft/language-server-protocol/issues/468
+
 This is a repository adapted from [lsp-sample](https://github.com/Microsoft/vscode-extension-samples/tree/master/lsp-sample) to demonstrate
 
 - Usage of the JSON output
